@@ -17,7 +17,10 @@ module.exports = function({types: t}) {
           return acc + quasi.value.raw + expr;
         }, '');
 
-        const plugins = state.opts.plugins || [];
+        const pluginsOpts = state.opts.plugins || [];
+
+        const plugins = pluginsOpts.map(handlePlugin);
+
         const processed = postcss(plugins)
           .process(css, {parser: safe, from: this.file.opts.filename}).css;
 
@@ -32,6 +35,16 @@ module.exports = function({types: t}) {
     }
   };
 };
+
+function handlePlugin(pluginArg) {
+  if (Array.isArray(pluginArg)) {
+    return require(pluginArg[0]).apply(null, pluginArg.slice(1));
+  } else if (typeof pluginArg === 'string') {
+    return require(pluginArg);
+  } else {
+    return pluginArg;
+  }
+}
 
 function expressionPlaceholder(i) {
   return '___QUASI_EXPR_' + i + '___';
