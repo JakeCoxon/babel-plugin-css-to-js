@@ -1,0 +1,2 @@
+
+csjs`.foo{ -webkit-transform: ${ foo }; transform: ${ foo }; color: ${ bar } }`;

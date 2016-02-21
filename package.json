@@ -1,0 +1,31 @@
+{
+  "name": "babel-plugin-csjs-postcss",
+  "version": "0.1.0",
+  "description": "Babel plugin for running postcss on csjs",
+  "keywords": [
+    "csjs",
+    "babel-plugin"
+  ],
+  "author": "Ryan Tsao <ryan.j.tsao@gmail.com>",
+  "main": "dist/index.js",
+  "homepage": "https://github.com/rtsao/babel-plugin-csjs-postcss",
+  "repository": "git@github.com:rtsao/babel-plugin-csjs-postcss.git",
+  "bugs": "https://github.com/rtsao/babel-plugin-csjs-postcss/issues",
+  "scripts": {
+    "prepublish": "babel src -d dist --presets es2015",
+    "test": "babel-node --presets es2015 src/test/index.js"
+  },
+  "dependencies": {
+    "postcss": "^5.0.16",
+    "postcss-safe-parser": "^1.0.6"
+  },
+  "devDependencies": {
+    "autoprefixer": "^6.3.3",
+    "babel-cli": "^6.5.1",
+    "babel-core": "^6.5.2",
+    "babel-preset-es2015": "^6.5.0",
+    "istanbul": "^0.4.0",
+    "tape": "^4.2.0"
+  },
+  "license": "MIT"
+}
