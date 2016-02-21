@@ -6,7 +6,9 @@
 Babel plugin for running postcss on csjs
 
 ### Autoprefixer example
-`npm i babel-plugin-csjs-postcss autoprefixer --save-dev`
+```sh
+npm i babel-plugin-csjs-postcss autoprefixer --save-dev
+```
 
 **Before:**
 ```javascript
