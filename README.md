@@ -5,7 +5,7 @@
 
 Babel plugin for running [PostCSS](https://github.com/postcss/postcss) on [CSJS](https://github.com/rtsao/csjs) at build time
 
-### Autoprefixer example
+### [Autoprefixer](https://github.com/postcss/autoprefixer) example
 ```sh
 npm i babel-plugin-csjs-postcss autoprefixer --save-dev
 ```
