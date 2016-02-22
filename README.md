@@ -3,7 +3,7 @@
 [![build status][build-badge]][build-href]
 [![dependencies status][deps-badge]][deps-href]
 
-Babel plugin for running postcss on csjs
+Babel plugin for running [PostCSS](https://github.com/postcss/postcss) on [CSJS](https://github.com/rtsao/csjs) at build time
 
 ### Autoprefixer example
 ```sh
