@@ -1,0 +1,8 @@
+
+css`
+    transform: translateX(${x}); 
+    margin: 1px 1px ${marginBottom} 1px;
+    line-height: 2.5;
+    something: true;
+    anything: undefined;
+`;

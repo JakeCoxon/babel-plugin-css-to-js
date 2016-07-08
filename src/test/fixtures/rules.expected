@@ -1,0 +1,19 @@
+
+({
+    "#a > asd > asdaw32312": {
+        ":hover": {
+            composes: foo ? {
+                border: "1px"
+            } : undefined,
+            transform: state => state.hello,
+            margin: `1px 1px ${ bar } 1px`,
+            margin: "asd"
+        },
+        ":global": {
+            something: "yellow"
+        },
+        "&": {
+            asd: "true"
+        }
+    }
+});

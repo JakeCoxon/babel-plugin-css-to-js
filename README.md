@@ -1,60 +1,59 @@
-# babel-plugin-csjs-postcss
+# babel-plugin-css-to-js
 
-[![build status][build-badge]][build-href]
-[![dependencies status][deps-badge]][deps-href]
+Babel plugin for converting CSS template literals into JavaScript object literals
 
-Babel plugin for running [PostCSS](https://github.com/postcss/postcss) on [CSJS](https://github.com/rtsao/csjs) at build time
-
-### [Autoprefixer](https://github.com/postcss/autoprefixer) example
+### Install
 ```sh
-npm i babel-plugin-csjs-postcss autoprefixer --save-dev
+npm i babel-plugin-css-to-js --save-dev
 ```
 
 **Before:**
 ```javascript
-csjs`
-
-.foo {
-  transform: ${foo};
-}
-
-`;
+const rule = props => css`
+  font-size: ${props.fontSize}px;
+  margin-top: ${props.margin ? '15px' : 0};
+  color: red;
+  line-height: 1.4;
+  :hover {
+    color: blue;
+    fontSize: ${props.fontSize + 2}px
+  }
+  @media (min-height: 300px) {
+    background-color: gray;
+    :hover {
+      color: black;
+    }
+  }
+`
 ```
 
 **After:**
 ```javascript
-csjs`
-
-.foo {
-  -webkit-transform: ${ foo };
-          transform: ${ foo };
-}
-
-`;
+const rule = props => ({
+  fontSize: props.fontSize + 'px',
+  marginTop: props.margin ? '15px' : 0,
+  color: 'red',
+  lineHeight: 1.4,
+  ':hover': {
+    color: 'blue',
+    fontSize: props.fontSize + 2 + 'px'
+  },
+  '@media (min-height: 300px)': {
+    backgroundColor: 'gray',
+    ':hover': {
+      color: 'black'
+    }
+  }
+})
 ```
 
 **.babelrc**
 ```
 {
-  "plugins": [["csjs-postcss", {
+  "plugins": [["css-to-js", {
     "plugins": ["autoprefixer"]
   }]]
 }
 ```
 
 
-### Advanced Configuration
-
-**.babelrc**
-```
-{
-  "plugins": [["csjs-postcss", {
-    "plugins": [["autoprefixer", {"browsers": ["last 2 versions"]}]]
-  }]]
-}
-```
-
-[build-badge]: https://travis-ci.org/rtsao/babel-plugin-csjs-postcss.svg?branch=master
-[build-href]: https://travis-ci.org/rtsao/babel-plugin-csjs-postcss
-[deps-badge]: https://david-dm.org/rtsao/babel-plugin-csjs-postcss.svg
-[deps-href]: https://david-dm.org/rtsao/babel-plugin-csjs-postcss

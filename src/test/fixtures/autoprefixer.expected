@@ -1,2 +1,8 @@
 
-csjs`.foo{ -webkit-transform: ${ foo }; transform: ${ foo }; color: ${ bar } }`;
+({
+  ".foo": {
+    webkitTransform: foo,
+    transform: foo,
+    color: bar
+  }
+});

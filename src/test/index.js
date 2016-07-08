@@ -4,43 +4,44 @@ const babel = require('babel-core');
 
 const pluginPath = require.resolve('../');
 
+const outputExpected = name => plugins => {
+  const output = babel.transformFileSync(`${__dirname}/fixtures/${name}.source`, {
+    plugins: [[pluginPath, {
+      plugins: plugins
+    }]]
+  }).code.trim();
+
+  const expected = fs.readFileSync(`${__dirname}/fixtures/${name}.expected`, 'utf-8').trim();
+
+  return { output, expected }
+}
+
+test('basic rules', (t) => {
+  const { output, expected } = outputExpected("rules")([]);
+  t.equal(output, expected, 'output matches expected');
+  t.end();
+});
+
+test('basic declarations', (t) => {
+  const { output, expected } = outputExpected("declarations")([])
+  t.equal(output, expected, 'output matches expected');
+  t.end();
+});
+
+test('basic media', (t) => {
+  const { output, expected } = outputExpected("media")([])
+  t.equal(output, expected, 'output matches expected');
+  t.end();
+});
+
+test('different values', (t) => {
+  const { output, expected } = outputExpected("values")([])
+  t.equal(output, expected, 'output matches expected');
+  t.end();
+});
+
 test('basic autoprefixing', (t) => {
-  var output = babel.transformFileSync(__dirname + '/fixtures/autoprefixer.source', {
-    plugins: [[pluginPath, {
-      plugins: [require('autoprefixer')]
-    }]]
-  });
-
-  var expected = fs.readFileSync(__dirname + '/fixtures/autoprefixer.expected', 'utf-8');
-
-  t.equal(output.code.trim(), expected.trim(), 'output matches expected');
-  t.end();
-});
-
-test('basic autoprefixing (string plugin name)', (t) => {
-  var output = babel.transformFileSync(__dirname + '/fixtures/autoprefixer.source', {
-    plugins: [[pluginPath, {
-      plugins: ['autoprefixer']
-    }]]
-  });
-
-  var expected = fs.readFileSync(__dirname + '/fixtures/autoprefixer.expected', 'utf-8');
-
-  t.equal(output.code.trim(), expected.trim(), 'output matches expected');
-  t.end();
-});
-
-test('basic autoprefixing (arguments)', (t) => {
-  var output = babel.transformFileSync(__dirname + '/fixtures/autoprefixer.source', {
-    plugins: [[pluginPath, {
-      plugins: [
-        ['autoprefixer', {browsers: ['last 2 versions']}]
-      ]
-    }]]
-  });
-
-  var expected = fs.readFileSync(__dirname + '/fixtures/autoprefixer.expected', 'utf-8');
-
-  t.equal(output.code.trim(), expected.trim(), 'output matches expected');
+  const { output, expected } = outputExpected("autoprefixer")([require('autoprefixer')])
+  t.equal(output, expected, 'output matches expected');
   t.end();
 });

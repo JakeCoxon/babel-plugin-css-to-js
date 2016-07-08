@@ -1,11 +1,12 @@
 const postcss = require('postcss');
 const safe = require('postcss-safe-parser');
+const camelCase = require('camelcase');
 
 module.exports = function({types: t}) {
   return {
     visitor: {
       TaggedTemplateExpression: function(path, state) {
-        if (path.node.tag.name !== 'csjs') {
+        if (path.node.tag.name !== 'css') {
           return false;
         }
 
@@ -22,19 +23,65 @@ module.exports = function({types: t}) {
         const plugins = pluginsOpts.map(handlePlugin);
 
         const processed = postcss(plugins)
-          .process(css, {parser: safe, from: this.file.opts.filename}).css;
+          .process(css, {parser: safe, from: this.file.opts.filename}).root;
 
-        const {quasis, exprs} = splitExpressions(processed);
+        const objectExpression = buildObjectAst(t, processed.nodes, nodeExprs);
+        path.replaceWith(objectExpression);
 
-        const quasisAst = buildQuasisAst(t, quasis);
-        const exprsAst = exprs.map(exprIndex => nodeExprs[exprIndex]);
-
-        path.node.quasi.quasis = quasisAst;
-        path.node.quasi.expressions = exprsAst;
       },
     }
   };
 };
+
+function buildObjectAst(t, nodes, nodeExprs) {
+  const properties = nodes.map(node => 
+    (node.type == 'decl')   ?
+
+      t.objectProperty(
+        t.identifier(camelCase(node.prop)), 
+        buildValueAst(t, node.value, nodeExprs))
+
+    : (node.type == 'rule')   ? 
+
+      t.objectProperty(
+        t.stringLiteral(node.selector), 
+        buildObjectAst(t, node.nodes, nodeExprs))
+
+    : (node.type == 'atrule') ? 
+
+      t.objectProperty(
+        t.stringLiteral(`@${node.name} ${node.params}`), 
+        buildObjectAst(t, node.nodes, nodeExprs))
+
+    : undefined
+  )
+
+  return t.objectExpression(properties);
+}
+
+function isNumeric(x) {
+  return !isNaN(x);
+}
+
+function buildValueAst(t, value, nodeExprs) {
+  const {quasis, exprs} = splitExpressions(value);
+  if (quasis.length == 2 && quasis[0].length == 0 && quasis[1].length == 0) {
+    return nodeExprs[exprs[0]];
+  }
+
+  if (quasis.length == 1) {
+    if (isNumeric(quasis[0])) {
+      return t.numericLiteral(+quasis[0]);
+    }
+    return t.stringLiteral(quasis[0])
+  }
+
+
+
+  const quasisAst = buildQuasisAst(t, quasis);
+  const exprsAst = exprs.map(exprIndex => nodeExprs[exprIndex]);
+  return t.templateLiteral(quasisAst, exprsAst);
+}
 
 function handlePlugin(pluginArg) {
   if (Array.isArray(pluginArg)) {
