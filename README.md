@@ -16,7 +16,7 @@ const rule = props => css`
   line-height: 1.4;
   :hover {
     color: blue;
-    fontSize: ${props.fontSize + 2}px
+    fontSize: ${props.fontSize + 2}px;
   }
   @media (min-height: 300px) {
     background-color: gray;
