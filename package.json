@@ -16,12 +16,12 @@
     "test": "babel-node --presets es2015 src/test/index.js"
   },
   "dependencies": {
-    "camelcase": "^3.0.0",
-    "postcss": "^5.0.16",
-    "postcss-safe-parser": "^1.0.6"
+    "camelcase": "^4.1.0",
+    "postcss": "^6.0.14",
+    "postcss-safe-parser": "^3.0.1"
   },
   "devDependencies": {
-    "autoprefixer": "^6.3.3",
+    "autoprefixer": "^7.2.2",
     "babel-cli": "^6.5.1",
     "babel-core": "^6.5.2",
     "babel-preset-es2015": "^6.5.0",

@@ -1,7 +1,7 @@
 
 ({
-    transform: `translateX(${ x })`,
-    margin: `1px 1px ${ marginBottom } 1px`,
+    transform: `translateX(${x})`,
+    margin: `1px 1px ${marginBottom} 1px`,
     lineHeight: 2.5,
     something: "true",
     anything: "undefined"

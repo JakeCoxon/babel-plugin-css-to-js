@@ -45,3 +45,9 @@ test('basic autoprefixing', (t) => {
   t.equal(output, expected, 'output matches expected');
   t.end();
 });
+
+test('important', (t) => {
+  const { output, expected } = outputExpected("important")([])
+  t.equal(output, expected, 'output matches expected');
+  t.end();
+});
