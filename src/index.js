@@ -34,23 +34,23 @@ module.exports = function({types: t}) {
 };
 
 function buildObjectAst(t, nodes, nodeExprs) {
-  const properties = nodes.map(node => 
+  const properties = nodes.map(node =>
     (node.type == 'decl')   ?
 
       t.objectProperty(
-        t.identifier(camelCase(node.prop)), 
-        buildValueAst(t, node.value, nodeExprs))
+        t.identifier(camelCase(node.prop)),
+        buildValueAst(t, node.value, nodeExprs, node.important))
 
-    : (node.type == 'rule')   ? 
+    : (node.type == 'rule')   ?
 
       t.objectProperty(
-        t.stringLiteral(node.selector), 
+        t.stringLiteral(node.selector),
         buildObjectAst(t, node.nodes, nodeExprs))
 
-    : (node.type == 'atrule') ? 
+    : (node.type == 'atrule') ?
 
       t.objectProperty(
-        t.stringLiteral(`@${node.name} ${node.params}`), 
+        t.stringLiteral(`@${node.name} ${node.params}`),
         buildObjectAst(t, node.nodes, nodeExprs))
 
     : undefined
@@ -63,8 +63,10 @@ function isNumeric(x) {
   return !isNaN(x);
 }
 
-function buildValueAst(t, value, nodeExprs) {
-  const {quasis, exprs} = splitExpressions(value);
+function buildValueAst(t, value, nodeExprs, isImportant) {
+  const valueWithAppendedImportant = isImportant ? `${value} !important` : value
+
+  const {quasis, exprs} = splitExpressions(valueWithAppendedImportant);
   if (quasis.length == 2 && quasis[0].length == 0 && quasis[1].length == 0) {
     return nodeExprs[exprs[0]];
   }
