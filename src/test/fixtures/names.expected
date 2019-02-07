@@ -1,0 +1,21 @@
+
+({
+    [something]: {
+        width: "100%",
+        [key]: "100%"
+    },
+    "body": {
+        [something]: {
+            width: "100%"
+        },
+        [`a b ${something}`]: {
+            width: "100%",
+            [`border-${direction}`]: "1px solid black"
+        }
+    },
+    [`@media (max-width: ${size}px)`]: {
+        "body": {
+            width: "80%"
+        }
+    }
+});

@@ -34,27 +34,33 @@ module.exports = function({types: t}) {
 };
 
 function buildObjectAst(t, nodes, nodeExprs) {
-  const properties = nodes.map(node =>
-    (node.type == 'decl')   ?
+  const properties = nodes.map(node => {
 
-      t.objectProperty(
-        t.identifier(camelCase(node.prop)),
-        buildValueAst(t, node.value, nodeExprs, node.important))
+    let key, valueExpr;
+    if (node.type == 'decl') {
+      key = node.prop;
+      valueExpr = buildInterpolatedAst(
+        t, 
+        node.important ? `${node.value} !important` : node.value, 
+        nodeExprs, 
+      )[0];
+    } else if (node.type == 'rule') {
+      key = node.selector;
+      valueExpr = buildObjectAst(t, node.nodes, nodeExprs)
+    } else if (node.type == 'atrule') {
+      key = `@${node.name} ${node.params}`;
+      valueExpr = buildObjectAst(t, node.nodes, nodeExprs);
+    }
+    
+    let [keyExpr, computed] = buildInterpolatedAst(t, key, nodeExprs);
 
-    : (node.type == 'rule')   ?
+    if (node.type == 'decl' && !computed && t.isStringLiteral(keyExpr)) {
+      keyExpr = t.identifier(camelCase(keyExpr.value));
+    }
 
-      t.objectProperty(
-        t.stringLiteral(node.selector),
-        buildObjectAst(t, node.nodes, nodeExprs))
+    return t.objectProperty(keyExpr, valueExpr, computed)
 
-    : (node.type == 'atrule') ?
-
-      t.objectProperty(
-        t.stringLiteral(`@${node.name} ${node.params}`),
-        buildObjectAst(t, node.nodes, nodeExprs))
-
-    : undefined
-  )
+  })
 
   return t.objectExpression(properties);
 }
@@ -63,26 +69,23 @@ function isNumeric(x) {
   return !isNaN(x);
 }
 
-function buildValueAst(t, value, nodeExprs, isImportant) {
-  const valueWithAppendedImportant = isImportant ? `${value} !important` : value
+function buildInterpolatedAst(t, value, nodeExprs) {
 
-  const {quasis, exprs} = splitExpressions(valueWithAppendedImportant);
+  const { quasis, exprs } = splitExpressions(value);
   if (quasis.length == 2 && quasis[0].length == 0 && quasis[1].length == 0) {
-    return nodeExprs[exprs[0]];
+    return [nodeExprs[exprs[0]], true];
   }
 
   if (quasis.length == 1) {
     if (isNumeric(quasis[0])) {
-      return t.numericLiteral(+quasis[0]);
+      return [t.numericLiteral(+quasis[0]), false];
     }
-    return t.stringLiteral(quasis[0])
+    return [t.stringLiteral(quasis[0]), false]
   }
-
-
 
   const quasisAst = buildQuasisAst(t, quasis);
   const exprsAst = exprs.map(exprIndex => nodeExprs[exprIndex]);
-  return t.templateLiteral(quasisAst, exprsAst);
+  return [t.templateLiteral(quasisAst, exprsAst), true];
 }
 
 function handlePlugin(pluginArg) {
@@ -96,7 +99,7 @@ function handlePlugin(pluginArg) {
 }
 
 function expressionPlaceholder(i) {
-  return '___QUASI_EXPR_' + i + '___';
+  return 'QUASI_EXPR_' + i + '___';
 }
 
 function buildQuasisAst(t, quasis) {
@@ -106,7 +109,7 @@ function buildQuasisAst(t, quasis) {
   });
 }
 
-const regex = /___QUASI_EXPR_(\d+)___/g;
+const regex = /QUASI_EXPR_(\d+)___/g;
 
 function splitExpressions(css) {
   let found, matches = [];

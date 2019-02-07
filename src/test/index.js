@@ -51,3 +51,9 @@ test('important', (t) => {
   t.equal(output, expected, 'output matches expected');
   t.end();
 });
+
+test('names', (t) => {
+  const { output, expected } = outputExpected("names")([])
+  t.equal(output, expected, 'output matches expected');
+  t.end();
+});
