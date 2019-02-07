@@ -1,6 +1,6 @@
 {
   "name": "babel-plugin-css-to-js",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Babel plugin for running converting css template literals into JS object literals",
   "keywords": [
     "css",
